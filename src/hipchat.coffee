@@ -148,6 +148,12 @@ class HipChat extends Adapter
       console.log "Got invite to #{room_jid} from #{from_jid} - joining"
       bot.join room_jid
 
+    # Add a callback for dealing with pings in debug
+    if @options.debug
+      console.log "configuring onPing callback"
+      bot.onPing ->
+        console.log "received a ping"
+
     console.log "bot configured and now connecting..."
     bot.connect()
 
