@@ -148,6 +148,7 @@ class HipChat extends Adapter
       console.log "Got invite to #{room_jid} from #{from_jid} - joining"
       bot.join room_jid
 
+    console.log "bot configured and now connecting..."
     bot.connect()
 
     @bot = bot
