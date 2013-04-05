@@ -154,8 +154,9 @@ class HipChat extends Adapter
       bot.onPing ->
         console.log "received a ping"
 
-    console.log "bot configured and now connecting..."
+    console.log "bot configured and now connecting..." if @options.debug
     bot.connect()
+    console.log "bot.connect() successfully called" if @options.debug
 
     @bot = bot
 
