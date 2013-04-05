@@ -64,7 +64,7 @@ class HipChat extends Adapter
       jid: "#{@options.jid}@chat.hipchat.com/bot",
       password: @options.password,
       debug: @options.debug == 'true',
-      host: @options.host
+      host: @options.host or "chat.hipchat.com"
     )
     console.log "Wobot object:", bot
 
