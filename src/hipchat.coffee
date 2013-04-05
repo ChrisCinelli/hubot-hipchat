@@ -103,6 +103,7 @@ class HipChat extends Adapter
       # If HipChat sends an error, we get the error message from XMPP.
       # Otherwise, we get an Error object from the Node connection.
       console.log "Message: #{message}"
+      return unless message
       if message.message
         console.log "Error talking to HipChat:", message.message
       else
