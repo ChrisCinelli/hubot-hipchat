@@ -102,6 +102,7 @@ class HipChat extends Adapter
     bot.onError (message) ->
       # If HipChat sends an error, we get the error message from XMPP.
       # Otherwise, we get an Error object from the Node connection.
+      console.log "Message: #{message}"
       if message.message
         console.log "Error talking to HipChat:", message.message
       else
