@@ -108,7 +108,7 @@ class HipChat extends Adapter
         if users
           for user in users
             uJid = self.userIdFromJid(user.jid)
-            console.log "Adding user #{uJid}: ", user if self.options.debug == 'verbose'
+            console.log "Adding user #{uJid}: \n", user if self.options.debug == 'verbose'
             self.robot.brain.userForId uJid, user
         else
           console.log "Can't list users: #{err}"
@@ -151,7 +151,9 @@ class HipChat extends Adapter
       author.reply_to = from
 
       # add extra details if this message is from a known user
-      author_data = self.robot.brain.userForId(self.userIdFromJid(from))
+      uid = self.userIdFromJid(from)
+      author_data = self.robot.brain.userForId(uid)
+      console.log  'from:', from, 'uid:', uid, 'author_data', author_data  if @options.debug == 'verbose'
       if author_data
         author.name = author_data.name
         author.mention_name = author_data.mention_name
