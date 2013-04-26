@@ -136,6 +136,7 @@ class HipChat extends Adapter
       hubot_msg = message.replace(regex, "#{bot.mention_name}: ")
 
       self.receive new TextMessage(author, hubot_msg)
+      console.log 'onMessage:TextMessage', author, hubot_msg
 
     bot.onPrivateMessage (from, message) ->
       console.log 'onPrivateMessage', from, message
@@ -156,6 +157,7 @@ class HipChat extends Adapter
       hubot_msg = "#{bot.mention_name}: #{message}"
 
       self.receive new TextMessage(author, hubot_msg)
+      console.log 'onPrivateMessage:TextMessage', author, hubot_msg
 
     # Join rooms automatically when invited
     bot.onInvite (room_jid, from_jid, message) =>
