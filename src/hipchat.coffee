@@ -138,7 +138,7 @@ class HipChat extends Adapter
       self.receive new TextMessage(author, hubot_msg)
 
     bot.onPrivateMessage (from, message) ->
-      console.log 'onPrivateMessage', channel, from, message
+      console.log 'onPrivateMessage', from, message
       author = {}
       author.reply_to = from
 
