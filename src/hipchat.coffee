@@ -154,6 +154,7 @@ class HipChat extends Adapter
       author = {}
       author.reply_to = from
 
+      console.log 'onPrivateMessage::Users', self.robot.brain.users()
       # add extra details if this message is from a known user
       uid = self.userIdFromJid(from)
       author_data = self.robot.brain.userForId(uid)
