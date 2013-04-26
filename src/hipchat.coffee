@@ -133,6 +133,7 @@ class HipChat extends Adapter
 
       # add extra details if this message is from a known user
       author_data = self.robot.brain.userForName(from)
+      console.log  'from:', from, 'author_data', author_data  if @options.debug == 'verbose'
       if author_data
         author.name = author_data.name
         author.mention_name = author_data.mention_name
