@@ -38,11 +38,11 @@ class HipChat extends Adapter
       console.log "ERROR: Not sure who to send to. envelope=", envelope
       return
 
-    unless @bot
+    if @bot
       for str in strings
         @bot.message target_jid, str
     else
-      console.log "@bot isn't set yet?"
+      console.log "-----> @bot isn't set yet? <-----"
 
   reply: (envelope, strings...) ->
     console.log 'Reply', envelope, strings
