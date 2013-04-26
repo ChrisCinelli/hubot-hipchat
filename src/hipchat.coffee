@@ -5,7 +5,25 @@ HTTPS = require 'https'
 Wobot = require('wobot').Bot
 
 class HipChat extends Adapter
-  send: (envelope, strings...) ->
+
+  constructor: () ->
+    @options =
+      jid:      process.env.HUBOT_HIPCHAT_JID
+      password: process.env.HUBOT_HIPCHAT_PASSWORD
+      token:    process.env.HUBOT_HIPCHAT_TOKEN or null
+      rooms:    process.env.HUBOT_HIPCHAT_ROOMS or "All"
+      debug:    process.env.HUBOT_HIPCHAT_DEBUG or false
+      host:     process.env.HUBOT_HIPCHAT_HOST
+    if process.env.HUBOT_HIPCHAT_JOIN_ROOMS_ON_INVITE is null
+      @options.join_rooms_on_invite = true
+    else
+      @options.join_rooms_on_invite = process.env.HUBOT_HIPCHAT_JOIN_ROOMS_ON_INVITE
+    console.log "HipChat adapter options:", @options
+    
+    super
+    
+  send: (envelope, strings...) =>
+    console.log 'Send', envelope, strings if @options.debug == 'verbose'
     user = null
     room = null
     target_jid = null
@@ -37,41 +55,34 @@ class HipChat extends Adapter
       console.log "ERROR: Not sure who to send to. envelope=", envelope
       return
 
-    for str in strings
-      @bot.message target_jid, str
+    if @bot
+      for str in strings
+        @bot.message target_jid, str
+    else
+      console.log "-----> @bot isn't set yet? <-----"
 
-  reply: (envelope, strings...) ->
+
+  reply: (envelope, strings...) =>
+    console.log 'Reply', envelope, strings if @options.debug == 'verbose'
     user = if envelope.user then envelope.user else envelope
     for str in strings
       @send envelope, "@#{user.mention_name} #{str}"
 
-  run: ->
+  run: =>
     self = @
-    @options =
-      jid:      process.env.HUBOT_HIPCHAT_JID
-      password: process.env.HUBOT_HIPCHAT_PASSWORD
-      token:    process.env.HUBOT_HIPCHAT_TOKEN or null
-      rooms:    process.env.HUBOT_HIPCHAT_ROOMS or "All"
-      debug:    process.env.HUBOT_HIPCHAT_DEBUG or false
-      host:     process.env.HUBOT_HIPCHAT_HOST or null
-    if process.env.HUBOT_HIPCHAT_JOIN_ROOMS_ON_INVITE is null
-      @options.join_rooms_on_invite = true
-    else
-      @options.join_rooms_on_invite = process.env.HUBOT_HIPCHAT_JOIN_ROOMS_ON_INVITE
-    console.log "HipChat adapter options:", @options
 
     # create Wobot bot object
     bot = new Wobot(
       jid: @options.jid,
       password: @options.password,
-      debug: @options.debug == 'true',
+      debug: @options.debug == 'true' || @options.debug == 'verbose',
       host: @options.host
     )
     console.log "Wobot object:", bot
 
     bot.onConnect =>
       console.log "Connected to HipChat as @#{bot.mention_name}!"
-
+      
       # Provide our name to Hubot
       self.robot.name = bot.mention_name
 
@@ -103,12 +114,15 @@ class HipChat extends Adapter
     bot.onError (message) ->
       # If HipChat sends an error, we get the error message from XMPP.
       # Otherwise, we get an Error object from the Node connection.
-      if message.message
+      if(!message)
+        console.log "Received error from Wobot:", arguments
+      else if message.message
         console.log "Error talking to HipChat:", message.message
       else
         console.log "Received error from HipChat:", message
 
-    bot.onMessage (channel, from, message) ->
+    bot.onMessage (channel, from, message) =>
+      console.log 'onMessage', channel, from, message if @options.debug == 'verbose'
       author = {}
       author.name = from
       author.reply_to = channel
@@ -126,9 +140,11 @@ class HipChat extends Adapter
       regex = new RegExp("^@#{bot.mention_name}\\b", "i")
       hubot_msg = message.replace(regex, "#{bot.mention_name}: ")
 
+      console.log 'onMessage:TextMessage', author, hubot_msg if @options.debug == 'verbose'
       self.receive new TextMessage(author, hubot_msg)
 
-    bot.onPrivateMessage (from, message) ->
+    bot.onPrivateMessage (from, message) =>
+      console.log 'onPrivateMessage', from, message if @options.debug == 'verbose'
       author = {}
       author.reply_to = from
 
@@ -144,7 +160,8 @@ class HipChat extends Adapter
       regex = new RegExp("^@#{bot.mention_name}\\b", "i")
       message = message.replace(regex, "")
       hubot_msg = "#{bot.mention_name}: #{message}"
-
+      
+      console.log 'onPrivateMessage:TextMessage', author, hubot_msg if @options.debug == 'verbose'
       self.receive new TextMessage(author, hubot_msg)
 
     # Join rooms automatically when invited
@@ -157,6 +174,7 @@ class HipChat extends Adapter
         console.log "#{log_message} not joining because HUBOT_HIPCHAT_JOIN_ROOMS_ON_INVITE is set to false"
 
     bot.connect()
+    console.log "bot.connect() called" if @options && @options.debug == 'verbose'
 
     @bot = bot
 
