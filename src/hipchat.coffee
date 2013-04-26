@@ -107,7 +107,9 @@ class HipChat extends Adapter
       bot.getRoster (err, users, stanza) ->
         if users
           for user in users
-            self.robot.brain.userForId self.userIdFromJid(user.jid), user
+            uJid = self.userIdFromJid(user.jid)
+            console.log "Adding user #{uJid}: ", user if @options.debug == 'verbose'
+            self.robot.brain.userForId uJid, user
         else
           console.log "Can't list users: #{err}"
 
