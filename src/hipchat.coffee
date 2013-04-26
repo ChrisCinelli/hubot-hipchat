@@ -113,6 +113,8 @@ class HipChat extends Adapter
             console.log "Retriving user #{uJid}: \n", self.robot.brain.userForId(uJid) if self.options.debug == 'verbose'
         else
           console.log "Can't list users: #{err}"
+        console.log 'Users', self.robot.brain.users()
+      
 
     bot.onError (message) ->
       # If HipChat sends an error, we get the error message from XMPP.
