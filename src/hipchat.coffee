@@ -6,6 +6,7 @@ Wobot = require('wobot').Bot
 
 class HipChat extends Adapter
   send: (envelope, strings...) ->
+    console.log 'Send', envelope, strings
     user = null
     room = null
     target_jid = null
@@ -44,6 +45,8 @@ class HipChat extends Adapter
       console.log "@bot isn't set yet?"
 
   reply: (envelope, strings...) ->
+    console.log 'Reply', envelope, strings
+    
     user = if envelope.user then envelope.user else envelope
     for str in strings
       @send envelope, "@#{user.mention_name} #{str}"
@@ -114,6 +117,7 @@ class HipChat extends Adapter
         console.log "Received error from HipChat:", message
 
     bot.onMessage (channel, from, message) ->
+      console.log 'onMessage', channel, from, message
       author = {}
       author.name = from
       author.reply_to = channel
@@ -134,6 +138,7 @@ class HipChat extends Adapter
       self.receive new TextMessage(author, hubot_msg)
 
     bot.onPrivateMessage (from, message) ->
+      console.log 'onPrivateMessage', channel, from, message
       author = {}
       author.reply_to = from
 
