@@ -108,7 +108,7 @@ class HipChat extends Adapter
         if users
           for user in users
             uJid = self.userIdFromJid(user.jid)
-            console.log "Adding user #{uJid}: ", user if @options.debug == 'verbose'
+            console.log "Adding user #{uJid}: ", user if self.options.debug == 'verbose'
             self.robot.brain.userForId uJid, user
         else
           console.log "Can't list users: #{err}"
