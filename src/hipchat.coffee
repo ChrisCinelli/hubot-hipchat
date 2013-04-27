@@ -104,7 +104,7 @@ class HipChat extends Adapter
           bot.join room_jid
 
       # Fetch user info
-      bot.getRoster (err, users, stanza) ->
+      bot.getRoster (err, users, stanza) =>
         if users
           for user in users
             uJid = self.userIdFromJid(user.jid)
@@ -116,7 +116,7 @@ class HipChat extends Adapter
         console.log 'Users', self.robot.brain.users()
       
 
-    bot.onError (message) ->
+    bot.onError (message) =>
       # If HipChat sends an error, we get the error message from XMPP.
       # Otherwise, we get an Error object from the Node connection.
       if(!message)
@@ -202,13 +202,13 @@ class HipChat extends Adapter
       return null
 
   # Convenience HTTP Methods for posting on behalf of the token"d user
-  get: (path, callback) ->
+  get: (path, callback)=>
     @request "GET", path, null, callback
 
-  post: (path, body, callback) ->
+  post: (path, body, callback) =>
     @request "POST", path, body, callback
 
-  request: (method, path, body, callback) ->
+  request: (method, path, body, callback) =>
     console.log method, path, body
     host = @options.host or "api.hipchat.com"
     headers = "Host": host
@@ -229,11 +229,11 @@ class HipChat extends Adapter
       headers["Content-Type"] = "application/x-www-form-urlencoded"
       options.headers["Content-Length"] = body.length
 
-    request = HTTPS.request options, (response) ->
+    request = HTTPS.request options, (response) =>
       data = ""
-      response.on "data", (chunk) ->
+      response.on "data", (chunk) =>
         data += chunk
-      response.on "end", ->
+      response.on "end", =>
         if response.statusCode >= 400
           console.log "HipChat API error: #{response.statusCode}"
 
@@ -241,7 +241,7 @@ class HipChat extends Adapter
           callback null, JSON.parse(data)
         catch err
           callback null, data or { }
-      response.on "error", (err) ->
+      response.on "error", (err) =>
         callback err, null
 
     if method is "POST"
@@ -249,10 +249,10 @@ class HipChat extends Adapter
     else
       request.end()
 
-    request.on "error", (err) ->
+    request.on "error", (err) =>
       console.log err
       console.log err.stack
       callback err
 
-exports.use = (robot) ->
+exports.use = (robot) =>
   new HipChat robot
