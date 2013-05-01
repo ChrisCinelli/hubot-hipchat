@@ -113,9 +113,7 @@ class HipChat extends Adapter
             console.log "Retriving user #{uJid}: \n", self.robot.brain.userForId(uJid) if self.options.debug == 'verbose'
         else
           console.log "Can't list users: #{err}"
-        console.log 'Users', self.robot.brain.users()
       
-
     bot.onError (message) =>
       # If HipChat sends an error, we get the error message from XMPP.
       # Otherwise, we get an Error object from the Node connection.
@@ -154,7 +152,6 @@ class HipChat extends Adapter
       author = {}
       author.reply_to = from
 
-      console.log 'onPrivateMessage::Users', self.robot.brain.users()
       # add extra details if this message is from a known user
       uid = self.userIdFromJid(from)
       author_data = self.robot.brain.userForId(uid)
